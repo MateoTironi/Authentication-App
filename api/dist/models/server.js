@@ -16,6 +16,10 @@ const express_1 = __importDefault(require("express"));
 const usuarios_1 = __importDefault(require("../routes/usuarios"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
+const User_1 = __importDefault(require("./User"));
+const Group_1 = __importDefault(require("./Group"));
+const Channel_1 = __importDefault(require("./Channel"));
+const Message_1 = __importDefault(require("./Message"));
 class Server {
     constructor() {
         this.apiPath = {
@@ -56,5 +60,16 @@ class Server {
         });
     }
 }
+// DB association
+User_1.default.belongsToMany(Group_1.default, { through: 'Group' });
+Group_1.default.belongsToMany(User_1.default, { through: 'Group' });
+Group_1.default.hasMany(Channel_1.default);
+Channel_1.default.belongsTo(Group_1.default);
+// User.belongsToMany(Message, {through: 'Message'})
+Message_1.default.belongsTo(User_1.default);
+Channel_1.default.belongsToMany(Message_1.default, { through: 'Channel_message' });
+Group_1.default.belongsToMany(Message_1.default, { through: 'Group_message' });
+// Message.belongsTo(Channel)
+Channel_1.default.belongsToMany(User_1.default, { through: 'Channel_member' });
 exports.default = Server;
 //# sourceMappingURL=server.js.map

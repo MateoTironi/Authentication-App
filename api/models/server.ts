@@ -2,6 +2,10 @@ import express, { Application } from 'express';
 import userRoutes from '../routes/usuarios';
 import cors from 'cors'
 import db from '../db/connection';
+import User from './User';
+import Group from './Group';
+import Channel from './Channel';
+import Message from './Message';
 
 class Server {
 
@@ -50,5 +54,22 @@ class Server {
     }
 
 }
+
+// DB association
+User.belongsToMany(Group, {through: 'Group'})
+Group.belongsToMany(User, {through: 'Group'})   
+
+Group.hasMany(Channel)
+Channel.belongsTo(Group)
+
+// User.belongsToMany(Message, {through: 'Message'})
+Message.belongsTo(User)
+
+Channel.belongsToMany(Message, {through: 'Channel_message'})
+Group.belongsToMany(Message, {through: 'Group_message'})
+// Message.belongsTo(Channel)
+
+Channel.belongsToMany(User, {through: 'Channel_member'})
+
 
 export default Server;
